@@ -1,0 +1,464 @@
+{
+ "source/Lib/CommonLib/InterPrediction.cpp": [
+  {
+   "after": [
+    "#if !BDOF_RM_CONSTRAINTS",
+    "void InterPrediction::xSubPuBio(PredictionUnit& pu, PelUnitBuf& predBuf, const RefPicList &eRefPicList /*= REF_PIC_LIST_X*/, PelUnitBuf* yuvDstTmp /*= NULL*/)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 22 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::applyBiOptFlow(const PredictionUnit &pu, const CPelUnitBuf &yuvSrc0, const CPelUnitBuf &yuvSrc1, const int &refIdx0, const int &refIdx1, PelUnitBuf &yuvDst, const BitDepths &clipBitDepths)",
+    "#endif",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 22 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::subBlockBiOptFlow(Pel* dstY, const int dstStride, const Pel* src0, const int src0Stride, const Pel* src1, const int src1Stride, int bioParamOffset, const int bioParamStride, int width, int height, const ClpRng& clpRng, const int shiftNum, const int offset, const int limit)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 22 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::subBlockOBMC(PredictionUnit  &pu, PelUnitBuf* pDst)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 21 );"
+   ]
+  },
+  {
+   "after": [
+    "",
+    "void InterPrediction::xProcessDMVR(PredictionUnit& pu, PelUnitBuf &pcYuvDst, const ClpRngs &clpRngs, const bool bioApplied)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 13 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AA0093_ENHANCED_MMVD_EXTENSION",
+    "void  InterPrediction::sortInterMergeMMVDCandidates(PredictionUnit &pu, MergeCtx& mrgCtx, uint32_t * mmvdLUT, int16_t MMVDIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#else",
+    "void  InterPrediction::sortInterMergeMMVDCandidates(PredictionUnit& pu, MergeCtx& mrgCtx, uint32_t* mmvdLUT, uint32_t MMVDIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AA0093_ENHANCED_MMVD_EXTENSION",
+    "void  InterPrediction::sortAffineMergeCandidates(PredictionUnit pu, AffineMergeCtx& affMrgCtx, uint32_t * affMmvdLUT, int16_t afMMVDIdx, bool fromStart)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#else",
+    "void  InterPrediction::sortAffineMergeCandidates(PredictionUnit pu, AffineMergeCtx& affMrgCtx, uint32_t * affMmvdLUT, uint32_t afMMVDIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AB0079_TM_BCW_MRG",
+    "void InterPrediction::adjustMergeCandidatesBcwIdx(PredictionUnit& pu, MergeCtx& mrgCtx, const int mergeIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AF0128_LIC_MERGE_TM",
+    "void InterPrediction::adjustMergeCandidatesLicFlag(PredictionUnit& pu, MergeCtx& mrgCtx, const int mergeIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#endif",
+    "void InterPrediction::adjustMergeCandidates(PredictionUnit& pu, MergeCtx& mvpMergeCandCtx, int numRetrievedMergeCand)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#endif",
+    "                                          , int numRetrievedMergeCand)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "",
+    "void  InterPrediction::adjustInterMergeCandidates(PredictionUnit &pu, MergeCtx& mrgCtx, int mrgCandIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AA0093_REFINED_MOTION_FOR_ARMC",
+    "void InterPrediction::adjustMergeCandidatesInOneCandidateGroup(PredictionUnit &pu, MergeCtx& mvpMergeCandCtx, bool* applyBDMVR, Mv** mvBufBDMVR, Mv** mvBufBDMVRTmp, int numRetrievedMergeCand, bool subRefineList[][2], bool subRefineListTmp[][2], int mrgCandIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "    , uint32_t* affCandList, bool saveTemplate",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AG0276_NLIC",
+    "void InterPrediction::adjustAffineMergeCandidates(PredictionUnit &pu, AffineMergeCtx& affMrgCtx, AltLMAffineMergeCtx& altLMAffMrgCtx, AltLMAffineMergeCtx& altLMRMVFMrgCtx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AJ0126_INTER_AMVP_ENHANCEMENT",
+    "void InterPrediction::tmRefineAffineAMVPCandidates(PredictionUnit &pu, const RefPicList &eRefPicList, const int &refIdx, AffineAMVPInfo &affiAMVPInfo, int extCond)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "",
+    "void InterPrediction::adjustAffineAMVPCandidates(PredictionUnit &pu, const RefPicList &eRefPicList, const int &refIdx, AffineAMVPInfo &affiAMVPInfo, int extCond)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "#endif",
+    "  , int mrgCandIdx)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 11 );"
+   ]
+  },
+  {
+   "after": [
+    "                                     , const std::pair<int, int>* scalingRatio",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 23 );"
+   ]
+  },
+  {
+   "after": [
+    "                                          , int *midVal",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 23 );"
+   ]
+  },
+  {
+   "after": [
+    "                                     , const int requiredTemplate",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 23 );"
+   ]
+  },
+  {
+   "after": [
+    "}",
+    "void InterPrediction::deriveSubTmvpTMMv(PredictionUnit& pu)",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "Distortion InterPrediction::deriveTMMv(const PredictionUnit& pu, bool fillCurTpl, Distortion curBestCost, RefPicList eRefList, int refIdx, int maxSearchRounds, Mv& mv, const MvField* otherMvf)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::deriveTMMv(PredictionUnit& pu)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::processBDMVRSubPU(PredictionUnit& pu, bool subPURefine)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 13 );"
+   ]
+  },
+  {
+   "after": [
+    "#endif",
+    "#if JVET_AI0185_ADAPTIVE_COST_IN_MERGE_MODE",
+    "  , int mergeIdx",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 13 );"
+   ]
+  },
+  {
+   "after": [
+    "bool InterPrediction::processTM4SbTmvpBaseMV(PredictionUnit& pu, AffineMergeCtx &affineMergeCtx, int uiAffMergeCand, Distortion& uiCostOri, Distortion& uiCostBest, uint32_t targetList)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "bool InterPrediction::processTM4SbTmvp(PredictionUnit& pu, AffineMergeCtx &affineMergeCtx, int uiAffMergeCand, bool isEncoder)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "    , bool isInt4PosRefine",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "#if JVET_AJ0126_INTER_AMVP_ENHANCEMENT",
+    ", bool isInt4PosRefine",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "bool InterPrediction::processTM4AffinePara(PredictionUnit& pu, AffineMergeCtx &affineMergeCtx, int uiAffMergeCand, int32_t targetRefList, Mv(&cpBestMVF)[2][3], Distortion& uiCostOri, Distortion& uiCostBest",
+    "#if JVET_AI0185_ADAPTIVE_COST_IN_MERGE_MODE",
+    "  , int mergeIdx",
+    "#endif",
+    ")",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  },
+  {
+   "after": [
+    "bool InterPrediction::processBDMVR4AdaptiveAffine(PredictionUnit& pu, Mv(&mvAffiL0)[2][3], Mv(&mvAffiL1)[2][3], EAffineModel& affTypeL0, EAffineModel& affTypeL1)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 13 );"
+   ]
+  },
+  {
+   "after": [
+    "bool InterPrediction::processBDMVR(PredictionUnit& pu)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 13 );"
+   ]
+  },
+  {
+   "after": [
+    "void InterPrediction::amvpMergeModeMvRefinement(PredictionUnit& pu, MvField* mvFieldAmListCommon, const int mvFieldMergeIdx, const int mvFieldAmvpIdx)",
+    "#endif",
+    "{"
+   ],
+   "lines": [
+    "  J0090_CTX( 12 );"
+   ]
+  }
+ ],
+ "source/Lib/DecoderLib/DecCu.cpp": [
+  {
+   "after": [
+    "*/",
+    "",
+    "#include \"DecCu.h\""
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "#include \"CommonLib/CacheModel.h\"",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "",
+    "      if (currCU.predMode != MODE_INTRA && currCU.predMode != MODE_PLT && currCU.Y().valid())",
+    "      {"
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 1; g_j0090Pu = currCU.firstPU;",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "      if (currCU.predMode != MODE_INTRA && currCU.predMode != MODE_PLT && currCU.Y().valid())",
+    "      {",
+    "        xDeriveCUMV(currCU);"
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 0; g_j0090Pu = nullptr;",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "          currCU.firstPU->affineGPM[1] = sgpmAffineInfoList[sgpmAffineIdx].bAffine1;",
+    "        }",
+    "#endif"
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 2; g_j0090Pu = currCU.firstPU;",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "        }",
+    "#endif",
+    "        xReconInter( currCU );"
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 0; g_j0090Pu = nullptr;",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "          IntraPrediction::deriveDimdModeList(currCU.cs->picture->getRecoBuf(area), area, currCU, currCU.candModeListForTransformMtss, currCU.candCostListForTransformMtss);",
+    "        }",
+    "#endif "
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 3;",
+    "#endif"
+   ]
+  },
+  {
+   "after": [
+    "        }",
+    "#endif ",
+    "        xReconIntraQT( currCU );"
+   ],
+   "lines": [
+    "#if JVET_J0090_MEMORY_BANDWITH_MEASURE",
+    "        g_j0090Ctx = 0;",
+    "#endif"
+   ]
+  }
+ ]
+}
