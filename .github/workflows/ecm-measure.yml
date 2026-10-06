@@ -1,0 +1,206 @@
+name: ecm-measure
+
+# One-shot ECM-20 measurement campaign on GitHub-hosted runners (6 h per job, up to 20 jobs in parallel on a public repo).
+#   build        : ECM-20.0 from the JVET GitLab tag + our instrumentation overlay (vanilla and instrumented decoders)
+#   encode       : RA GOP16 (classes D, C) and All-Intra shards (D, C, E, B) from the Google-Drive test sequences, sized < 6 h each
+#   decode_fast  : every bitstream — bit-exactness MD5 (instrumented vs vanilla), sign-prediction per-TU dump, kernel-fetch trace
+#   decode_cache : every RA bitstream x 5 J0090 cache configurations with the D095 address-resolution fix (+ position dump, repeat check)
+#   summarize    : tables (traffic.csv, sp_table.txt, bitexact.csv, SUMMARY.md) as one artifact and in the run summary
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_encodes:
+        description: "Encode new bitstreams from the Drive sequences"
+        type: boolean
+        default: true
+      ra_classes:
+        description: "RA GOP16 classes to encode (letters; D and C fit in 6 h)"
+        default: "DC"
+      ai_classes:
+        description: "All-Intra classes to encode (letters)"
+        default: "DCEB"
+      decode_existing:
+        description: "Also measure the 10 committed D094 streams"
+        type: boolean
+        default: true
+      with_dumps:
+        description: "Write J0090 position dumps for the 32 KB 1-D runs (large artifacts)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: ecm-measure
+  cancel-in-progress: false
+
+env:
+  ECM_REPO: https://vcgit.hhi.fraunhofer.de/ecm/ECM.git
+  ECM_TAG: ECM-20.0
+  ECM_COMMIT: 3391a5f
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache built binaries
+        id: cache-bin
+        uses: actions/cache@v4
+        with:
+          path: ecm-bin
+          key: ecm-bin-${{ env.ECM_TAG }}-${{ hashFiles('overlay/**', 'patches/**', 'scripts/apply_overlay.py', 'scripts/build.sh') }}
+      - name: Clone ECM-20.0 and build vanilla + instrumented decoders
+        if: steps.cache-bin.outputs.cache-hit != 'true'
+        run: |
+          set -e
+          sudo apt-get update -qq && sudo apt-get install -y -qq cmake g++ ninja-build >/dev/null
+          if ! git clone --depth 1 --branch "$ECM_TAG" --recurse-submodules --shallow-submodules "$ECM_REPO" ecm_vanilla; then
+            echo "tag clone failed; falling back to full clone + checkout of commit $ECM_COMMIT"
+            git clone --recurse-submodules "$ECM_REPO" ecm_vanilla && git -C ecm_vanilla checkout "$ECM_COMMIT" && git -C ecm_vanilla submodule update --init --recursive
+          fi
+          git -C ecm_vanilla log -1 --format='ECM source: %H %d %s'
+          cp -r ecm_vanilla ecm_instr
+          python3 scripts/apply_overlay.py ecm_instr overlay
+          bash scripts/build.sh "$PWD/ecm_vanilla" vanilla "$PWD/ecm-bin"
+          bash scripts/build.sh "$PWD/ecm_instr" instr "$PWD/ecm-bin"
+          mkdir -p ecm-bin/cfg && cp ecm_vanilla/cfg/encoder_randomaccess_gop16_ecm.cfg ecm_vanilla/cfg/encoder_intra_ecm.cfg ecm-bin/cfg/
+          ls -la ecm-bin
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ecm-bin
+          path: ecm-bin
+          retention-days: 30
+
+  plan_encode:
+    needs: build
+    if: ${{ inputs.run_encodes }}
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        run: echo "matrix=$(python3 scripts/plan.py encode '${{ inputs.ra_classes }}' '${{ inputs.ai_classes }}')" >> "$GITHUB_OUTPUT"
+
+  encode:
+    needs: plan_encode
+    if: ${{ inputs.run_encodes }}
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.minutes }}
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan_encode.outputs.matrix) }}
+    env:
+      RCLONE_GDRIVE_TOKEN: ${{ secrets.RCLONE_GDRIVE_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: ecm-bin, path: ecm-bin }
+      - run: chmod +x ecm-bin/*_vanilla ecm-bin/*_instr scripts/*.sh
+      - name: Fetch sequence
+        run: bash scripts/fetch_sequence.sh "${{ matrix.name }}" seq
+      - name: Encode
+        run: bash scripts/encode.sh ecm-bin/EncoderApp_vanilla ecm-bin/cfg "${{ matrix.name }}" "seq/${{ matrix.name }}.yuv" "${{ matrix.mode }}" "${{ matrix.qp }}" "${{ matrix.frames }}" "${{ matrix.skip }}" encoded
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bitstream-${{ matrix.mode }}-${{ matrix.name }}-s${{ matrix.skip }}-q${{ matrix.qp }}
+          path: encoded
+          retention-days: 90
+
+  plan_decode:
+    needs: [build, encode]
+    if: ${{ always() && needs.build.result == 'success' }}
+    runs-on: ubuntu-latest
+    outputs:
+      fast: ${{ steps.plan.outputs.fast }}
+      cache: ${{ steps.plan.outputs.cache }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.run_encodes }}
+        continue-on-error: true
+        with: { pattern: "bitstream-*", path: encoded, merge-multiple: true }
+      - id: plan
+        run: |
+          set -e
+          mkdir -p all_streams encoded
+          if [ "${{ inputs.decode_existing }}" = "true" ]; then cp streams/*.bin all_streams/; fi
+          cp encoded/*.bin all_streams/ 2>/dev/null || true
+          cp encoded/*.enc.log encoded/*.time all_streams/ 2>/dev/null || true
+          ls -la all_streams
+          python3 scripts/plan.py decode all_streams > plan.json
+          echo "fast=$(python3 -c 'import json;print(json.dumps(json.load(open("plan.json"))["fast"]))')" >> "$GITHUB_OUTPUT"
+          echo "cache=$(python3 -c 'import json;print(json.dumps(json.load(open("plan.json"))["cache"]))')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with: { name: bitstreams-all, path: all_streams, retention-days: 90 }
+
+  decode_fast:
+    needs: plan_decode
+    if: ${{ always() && needs.plan_decode.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan_decode.outputs.fast) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: ecm-bin, path: ecm-bin }
+      - uses: actions/download-artifact@v4
+        with: { name: bitstreams-all, path: all_streams }
+      - run: chmod +x ecm-bin/*_vanilla ecm-bin/*_instr scripts/*.sh
+      - name: Fast measurements (MD5 bit-exactness, SP dump, kernel trace)
+        run: bash scripts/decode_fast.sh ecm-bin "${{ matrix.stream }}" "results/fast/${{ matrix.tag }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-fast-${{ matrix.tag }}
+          path: results
+          retention-days: 90
+
+  decode_cache:
+    needs: plan_decode
+    if: ${{ always() && needs.plan_decode.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.minutes }}
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix: ${{ fromJSON(needs.plan_decode.outputs.cache) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: ecm-bin, path: ecm-bin }
+      - uses: actions/download-artifact@v4
+        with: { name: bitstreams-all, path: all_streams }
+      - run: chmod +x ecm-bin/*_vanilla ecm-bin/*_instr scripts/*.sh
+      - name: J0090 cache-model decode (J0090_FIX=1)
+        run: |
+          dump=${{ matrix.dump }}; if [ "${{ inputs.with_dumps }}" != "true" ]; then dump=0; fi
+          bash scripts/decode_cache.sh ecm-bin "${{ matrix.stream }}" "cfg/${{ matrix.cfg }}.cfg" "results/cache/${{ matrix.tag }}/${{ matrix.cfg }}" "$dump" "${{ matrix.rep }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-cache-${{ matrix.tag }}-${{ matrix.cfg }}
+          path: results
+          retention-days: 90
+
+  summarize:
+    needs: [decode_fast, decode_cache]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { pattern: "results-*", path: results, merge-multiple: true }
+      - name: Build tables
+        run: |
+          python3 scripts/summarize.py results summary | tee -a "$GITHUB_STEP_SUMMARY"
+          cp -r results/fast summary/fast_raw 2>/dev/null || true
+          find results -name "*.log" -path "*cache*" -exec cp --parents {} summary/ \; 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: summary
+          path: summary
+          retention-days: 90
