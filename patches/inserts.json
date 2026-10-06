@@ -460,5 +460,139 @@
     "#endif"
    ]
   }
+ ],
+ "source/Lib/CommonLib/TrQuant.cpp": [
+  {
+   "after": [
+    "#include \"TrQuant.h\""
+   ],
+   "lines": [
+    "",
+    "// ---- CLR kernel trace (ADR-013 Stage B). Enabled only when env CLR_KTRACE=<file> is set (decoder runs). ----",
+    "#include <cstdio>",
+    "#include <cstdlib>",
+    "#include <algorithm>",
+    "#include <string>",
+    "#include <vector>",
+    "static FILE* g_clrTrace = nullptr; static bool g_clrInit = false;",
+    "static int g_clrPoc = 0, g_clrX = 0, g_clrY = 0, g_clrComp = 0;",
+    "static inline FILE* clrTrace() { if( !g_clrInit ) { g_clrInit = true; const char* p = getenv( \"CLR_KTRACE\" ); if( p ) g_clrTrace = fopen( p, \"w\" ); } return g_clrTrace; }"
+   ]
+  },
+  {
+   "after": [
+    "#endif  ",
+    ""
+   ],
+   "lines": [
+    "  if( FILE* t = clrTrace() )",
+    "  {",
+    "    int clrNnz = 0, clrLast = 0;",
+    "    for( int i = 0; i < zeroOutSize; i++ ) { if( src[ i ] ) { clrNnz++; clrLast = i + 1; } }",
+    "    fprintf( t, \"L %d %d %d %d %u %u %u %d %d %d %d %d\\n\", g_clrPoc, g_clrComp, g_clrX, g_clrY, size, mode, index, (int) lfnstExtFlag, trSize, zeroOutSize, clrNnz, clrLast );",
+    "  }"
+   ]
+  },
+  {
+   "after": [
+    "void TrQuant::xInvLfnst( const TransformUnit &tu, const ComponentID compID )",
+    "{"
+   ],
+   "lines": [
+    "  { g_clrPoc = tu.cs->slice->getPOC(); g_clrX = tu.blocks[ compID ].x; g_clrY = tu.blocks[ compID ].y; g_clrComp = (int) compID; }"
+   ]
+  },
+  {
+   "after": [
+    "  const uint32_t uiHeight     = area.height;"
+   ],
+   "lines": [
+    "  g_clrPoc = tu.cs->slice->getPOC(); g_clrX = area.x; g_clrY = area.y; g_clrComp = (int) compID;"
+   ]
+  },
+  {
+   "after": [
+    "void TrQuant::xIT( const TransformUnit &tu, const ComponentID &compID, const CCoeffBuf &pCoeff, PelBuf &pResidual )",
+    "{"
+   ],
+   "lines": [
+    "  { g_clrPoc = tu.cs->slice->getPOC(); g_clrX = tu.blocks[ compID ].x; g_clrY = tu.blocks[ compID ].y; g_clrComp = (int) compID; }"
+   ]
+  },
+  {
+   "after": [
+    "  const uint32_t transformHeightIndex   = floorLog2(height) - 1;                                // nLog2HeightMinus1, since transform start from 2-point",
+    "",
+    "  int trTypeHor = DCT2;",
+    "  int trTypeVer = DCT2;",
+    "",
+    "#if JVET_AJ0061_TIMD_MERGE",
+    "#if JVET_AK0187_IMPLICIT_MTS_LUT_EXTENSION",
+    "  if (tu.cu->timdMrg && !tu.cu->lfnstIdx && !tu.cs->sps->getUseImplicitMTS())",
+    "#else",
+    "  if (tu.cu->timdMrg && !tu.cu->lfnstIdx)",
+    "#endif",
+    "  {",
+    "    // Timd-Mrg CUs inherit transform type from their cands",
+    "    int implicitDst7 = PU::canTimdMergeImplicitDst7(tu);",
+    "    trTypeHor = (implicitDst7 & 2) ? DST7 : tu.cu->timdmTrType[tu.cu->timdMrg - 1][0];",
+    "    trTypeVer = (implicitDst7 & 1) ? DST7 : tu.cu->timdmTrType[tu.cu->timdMrg - 1][1];",
+    "#if AHG7_MTS_TOOLOFF_CFG",
+    "    trTypeHor = (width > tu.cs->sps->getIntraMTSMaxSize()) ? DCT2 : trTypeHor;",
+    "    trTypeVer = (height > tu.cs->sps->getIntraMTSMaxSize()) ? DCT2 : trTypeVer;",
+    "#endif",
+    "  }",
+    "#endif",
+    "#if JVET_AM0074_INTRA_MERGE",
+    "#if JVET_AJ0061_TIMD_MERGE",
+    "  else",
+    "#endif",
+    "  if (tu.cu->intraMergeMode && !tu.cu->lfnstIdx)",
+    "  {",
+    "    int implicitDst7 = PU::canIntraMergeImplicitDst7(tu);",
+    "    trTypeHor = (implicitDst7 & 2) ? DST7 : DCT2;",
+    "    trTypeVer = (implicitDst7 & 1) ? DST7 : DCT2;",
+    "#if AHG7_MTS_TOOLOFF_CFG",
+    "    trTypeHor = (width > tu.cs->sps->getIntraMTSMaxSize()) ? DCT2 : trTypeHor;",
+    "    trTypeVer = (height > tu.cs->sps->getIntraMTSMaxSize()) ? DCT2 : trTypeVer;",
+    "#endif",
+    "  }",
+    "#endif",
+    "#if JVET_AJ0061_TIMD_MERGE || JVET_AM0074_INTRA_MERGE",
+    "  else",
+    "  {",
+    "#endif",
+    "  getTrTypes ( tu, compID, trTypeHor, trTypeVer );",
+    "#if JVET_AJ0061_TIMD_MERGE || JVET_AM0074_INTRA_MERGE",
+    "  }",
+    "#endif"
+   ],
+   "lines": [
+    "  if( FILE* t = clrTrace() ) fprintf( t, \"M %d %d %d %d %d %d %d %d\\n\", g_clrPoc, g_clrComp, g_clrX, g_clrY, width, height, trTypeHor, trTypeVer );"
+   ]
+  },
+  {
+   "after": [
+    "  int    zeroOutSize = PU::getNSPTMatrixDim( transposeFlag ? height : width, transposeFlag ? width : height );"
+   ],
+   "lines": [
+    "  if( FILE* t = clrTrace() )",
+    "  {",
+    "#if JVET_AK0217_INTRA_MTSS && JVET_AL0215_NSPT_SET_FOR_INTRANN",
+    "    const int clrBkt = PU::getNSPTBucket( tu, secondBucket, compID );",
+    "#elif JVET_AK0217_INTRA_MTSS",
+    "    const int clrBkt = PU::getNSPTBucket( tu, secondBucket );",
+    "#elif JVET_AL0215_NSPT_SET_FOR_INTRANN",
+    "    const int clrBkt = PU::getNSPTBucket( tu, compID );",
+    "#else",
+    "    const int clrBkt = PU::getNSPTBucket( tu );",
+    "#endif",
+    "    const uint32_t tw = transposeFlag ? height : width, th = transposeFlag ? width : height;",
+    "    int clrNnz = 0, clrLast = 0;",
+    "    for( int i = 0; i < nsptCoeffNum; i++ ) { if( m_nsptTempInMatrix[ i ] ) { clrNnz++; clrLast = i + 1; } }",
+    "    fprintf( t, \"N %d %d %d %d %u %u %u %d %d %d %d %d %d\\n\", g_clrPoc, g_clrComp, g_clrX, g_clrY, tw, th, (unsigned) getNsptKernelCluster( nsptSetIdx, tw, th, nsptIdx, clrBkt ), zeroOutSize, (int) nsptSetIdx, nsptIdx, clrBkt, clrNnz, clrLast );",
+    "  }"
+   ]
+  }
  ]
 }
