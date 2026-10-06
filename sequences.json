@@ -1,0 +1,19 @@
+{
+  "_comment": "CTC 8-bit 4:2:0 raw YUV test sequences on Google Drive (folder shared as 'Test Sequences'). id = Drive file id; sizes in bytes checked after download.",
+  "B1_Kimono1_1920x1080_24":        {"id": "1843eyCx362pJgZ1BWzBSPLzsqIsD4fmC", "w": 1920, "h": 1080, "fps": 24, "cls": "B", "bytes": 746496000,  "cfg": "Kimono"},
+  "B2_ParkScene_1920x1080_24":      {"id": "1T6bD9NgeOSTIHzulcB2LOcxKUBA_eJcg", "w": 1920, "h": 1080, "fps": 24, "cls": "B", "bytes": 746496000,  "cfg": "ParkScene"},
+  "B3_Cactus_1920x1080_50":         {"id": "19CIbt-C0yFxJAPZSx5JWQsFQ9Hhb13ao", "w": 1920, "h": 1080, "fps": 50, "cls": "B", "bytes": 1555200000, "cfg": "Cactus"},
+  "B4_BQTerrace_1920x1080_60":      {"id": "1SozkhftsRxl_-v4bFXnuATkXVcDOK2Lb", "w": 1920, "h": 1080, "fps": 60, "cls": "B", "bytes": 1869350400, "cfg": "BQTerrace"},
+  "B5_BasketballDrive_1920x1080_50":{"id": "1RwVoVcTHePtGwMA0oZ26uDlZ0B_4StrI", "w": 1920, "h": 1080, "fps": 50, "cls": "B", "bytes": 1558310400, "cfg": "BasketballDrive"},
+  "C1_RaceHorsesC_832x480_30":      {"id": "1d8FMx_LEGCNSPlY5pu_o5x69Se9lZhkQ", "w": 832,  "h": 480,  "fps": 30, "cls": "C", "bytes": 179712000,  "cfg": "RaceHorsesC"},
+  "C2_BQMall_832x480_60":           {"id": "1dEfl5qIhzokM-mZWVwpCESdefzh2pPji", "w": 832,  "h": 480,  "fps": 60, "cls": "C", "bytes": 360023040,  "cfg": "BQMall"},
+  "C3_PartyScene_832x480_50":       {"id": "1_l7Zr3edEHhFGulnYUvUM16hcNTOxz60", "w": 832,  "h": 480,  "fps": 50, "cls": "C", "bytes": 300119040,  "cfg": "PartyScene"},
+  "C4_BasketballDrill_832x480_50":  {"id": "139JF5BU-3taz3m0fwQq9BZBT7HTe-Uge", "w": 832,  "h": 480,  "fps": 50, "cls": "C", "bytes": 300119040,  "cfg": "BasketballDrill"},
+  "D1_RaceHorses_416x240_30":       {"id": "1oYWqawv-GmHSsx75vU-O7wkmjf1i2sPW", "w": 416,  "h": 240,  "fps": 30, "cls": "D", "bytes": 44928000,   "cfg": "RaceHorses"},
+  "D2_BQSquare_416x240_60":         {"id": "1_87I17ex5_muhmK2-8kKzvCtNObmvzfO", "w": 416,  "h": 240,  "fps": 60, "cls": "D", "bytes": 90005760,   "cfg": "BQSquare"},
+  "D3_BlowingBubbles_416x240_50":   {"id": "1shAbEtfohglEe2RD0CJi7v4AJlOG4lOD", "w": 416,  "h": 240,  "fps": 50, "cls": "D", "bytes": 75029760,   "cfg": "BlowingBubbles"},
+  "D4_BasketballPass_416x240_50":   {"id": "17Z4zKzsrPT5dIsTUqcjjYxbUClWf7e8J", "w": 416,  "h": 240,  "fps": 50, "cls": "D", "bytes": 75029760,   "cfg": "BasketballPass"},
+  "E1_FourPeople_1280x720_60":      {"id": "1Y_YU7I744koVamvCt8EwNbNEyEBy9M-t", "w": 1280, "h": 720,  "fps": 60, "cls": "E", "bytes": 829440000,  "cfg": "FourPeople"},
+  "E2_Johnny_1280x720_60":          {"id": "1D4A8QKKatyU51jTeSZBJewRbhiHqpnvI", "w": 1280, "h": 720,  "fps": 60, "cls": "E", "bytes": 829440000,  "cfg": "Johnny"},
+  "E3_KristenAndSara_1280x720_60":  {"id": "1m6RrZkzXHNafD7wFnQZRdj4m64XEfPGu", "w": 1280, "h": 720,  "fps": 60, "cls": "E", "bytes": 829440000,  "cfg": "KristenAndSara"}
+}
